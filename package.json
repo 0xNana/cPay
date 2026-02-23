@@ -1,0 +1,24 @@
+{
+  "name": "cpay",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "npm --workspace apps/web run dev",
+    "dev:api": "npm --workspace apps/api run dev",
+    "contracts:install": "npm --prefix packages/contracts install",
+    "contracts:compile": "npm --prefix packages/contracts run compile",
+    "contracts:test": "npm --prefix packages/contracts test"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

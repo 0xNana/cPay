@@ -1,0 +1,24 @@
+# cPay - Confidential Payroll on Zama
+
+## Objective
+cPay is a confidential payroll dApp that lets companies run payroll onchain without exposing individual salary amounts in public transaction data.
+
+It uses:
+- Zama FHEVM primitives for encrypted inputs/decryption flows
+- OpenZeppelin ERC-7984 confidential token standard
+- Porto smart accounts for UX and sponsored execution
+- ISO 20022 `pain.001` input and `pain.002` reporting model
+
+## What Works Today
+- Upload and parse payroll batches from `pain.001` XML.
+- Validate payroll before execution (address validity, duplicates, totals, non-zero amounts).
+- Encrypt each payroll amount client-side through relayer SDK flow.
+- Execute payroll in a single batch via `PayrollExecutor`.
+- Read processing/completion states and download status artifacts.
+- Decrypt confidential balances through observer mode.
+
+## Scope of This Submission
+- Network: Sepolia testnet.
+- Token model: ERC-7984 wrapper over mock underlying stable token.
+- Batch guard: max 100 payments per run (onchain + backend policy).
+- Focus: confidential payroll execution UX with real onchain settlement behavior.

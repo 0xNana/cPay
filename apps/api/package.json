@@ -1,0 +1,15 @@
+{
+  "name": "cpay-api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env.local src/server.mjs",
+    "start": "node --env-file=.env.local src/server.mjs"
+  },
+  "dependencies": {
+    "@zama-fhe/relayer-sdk": "^0.4.1",
+    "porto": "^0.2.37",
+    "viem": "^2.46.2"
+  }
+}

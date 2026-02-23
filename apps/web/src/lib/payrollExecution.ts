@@ -1,0 +1,153 @@
+import type { Address, Hex } from "viem";
+import { keccak256, toHex } from "viem";
+import { appConfig, hasExecutionConfig } from "./config";
+import { portoProvider, publicClient, walletClient } from "./portoClient";
+import { payrollExecutorAbi } from "./contracts/payrollExecutorAbi";
+
+type ExecuteParams = {
+  smartAccount: Address;
+  recipients: Address[];
+  encryptedAmounts: Hex[];
+  inputProofs: Hex[];
+  onLog?: (line: string) => void;
+};
+
+export async function executePayrollWithIntent(params: ExecuteParams) {
+  const log = (...args: unknown[]) => {
+    if (appConfig.portoDebug) console.debug("[payroll:execute]", ...args);
+    if (params.onLog) {
+      const line = args
+        .map((arg) => (typeof arg === "string" ? arg : JSON.stringify(arg)))
+        .join(" ");
+      params.onLog(line);
+    }
+  };
+
+  if (params.recipients.length === 0) throw new Error("No recipients to execute.");
+  if (params.recipients.length !== params.encryptedAmounts.length || params.recipients.length !== params.inputProofs.length) {
+    throw new Error("Array length mismatch: recipients, encryptedAmounts, inputProofs.");
+  }
+  if (params.inputProofs.some((p) => p === "0x")) throw new Error("All input proofs must be non-empty.");
+
+  if (!hasExecutionConfig()) {
+    return {
+      mocked: true,
+      runId: keccak256(toHex(`dryrun-${Date.now()}`)),
+      txHash: null,
+      note: "Set VITE_PAYROLL_EXECUTOR_ADDRESS and VITE_PAYROLL_TOKEN_ADDRESS to enable onchain execution."
+    };
+  }
+
+  const payrollExecutor = appConfig.payrollExecutor!;
+  const payrollToken = appConfig.payrollToken!;
+  log("checking active porto account...");
+  const providerAccounts = (await portoProvider.request({ method: "eth_accounts" })) as Address[];
+  const activeAccount = providerAccounts[0];
+  if (!activeAccount) {
+    throw new Error("No active Porto account. Please log in again.");
+  }
+  if (activeAccount.toLowerCase() !== params.smartAccount.toLowerCase()) {
+    throw new Error(
+      `Account mismatch. Active Porto account is ${activeAccount}, but execution requested ${params.smartAccount}. Please reconnect Porto from the execution panel.`
+    );
+  }
+
+  log("start", {
+    smartAccount: activeAccount,
+    payrollExecutor,
+    payrollToken,
+    paymentCount: params.recipients.length,
+    mode: appConfig.executionMode
+  });
+
+  let txHash: Hex;
+  let runId: Hex = keccak256(toHex(`${activeAccount}-${Date.now()}`));
+  try {
+    if (appConfig.executionMode === "porto_direct") {
+      const nonce = (await publicClient.readContract({
+        address: payrollExecutor,
+        abi: payrollExecutorAbi,
+        functionName: "nonces",
+        args: [activeAccount]
+      })) as bigint;
+      const validUntil = Math.floor(Date.now() / 1000) + 600;
+      runId = keccak256(toHex(`${activeAccount}-${nonce.toString()}-${Date.now()}`));
+
+      log("simulating direct submission...");
+      await publicClient.simulateContract({
+        account: activeAccount,
+        address: payrollExecutor,
+        abi: payrollExecutorAbi,
+        functionName: "executePayroll",
+        args: [
+          runId,
+          payrollToken,
+          activeAccount,
+          params.recipients,
+          params.encryptedAmounts,
+          params.inputProofs,
+          validUntil,
+          nonce
+        ]
+      });
+      log("simulation ok");
+      txHash = await walletClient.writeContract({
+        account: activeAccount,
+        chain: walletClient.chain,
+        address: payrollExecutor,
+        abi: payrollExecutorAbi,
+        functionName: "executePayroll",
+        args: [
+          runId,
+          payrollToken,
+          activeAccount,
+          params.recipients,
+          params.encryptedAmounts,
+          params.inputProofs,
+          validUntil,
+          nonce
+        ]
+      });
+      log("submitted directly via porto", { txHash, runId });
+    } else {
+      if (!appConfig.executeUrl) throw new Error("Missing execution endpoint. Set VITE_EXECUTE_URL or VITE_API_BASE_URL.");
+      log("submitting to backend observer...");
+      const response = await fetch(appConfig.executeUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          smartAccount: activeAccount,
+          recipients: params.recipients,
+          encryptedAmounts: params.encryptedAmounts,
+          inputProofs: params.inputProofs
+        })
+      });
+      const json = (await response.json().catch(() => ({}))) as { runId?: Hex; txHash?: Hex; error?: string; message?: string };
+      if (!response.ok || !json?.txHash || !json?.runId) {
+        throw new Error(json?.message || json?.error || `Execution endpoint failed (${response.status})`);
+      }
+      txHash = json.txHash;
+      runId = json.runId;
+      log("submitted via backend observer", { txHash, runId });
+    }
+  } catch (error) {
+    const err = error as { message?: string; cause?: unknown; details?: unknown };
+    console.error("[payroll:execute] submission failed", {
+      message: err?.message,
+      details: err?.details,
+      cause: err?.cause,
+      raw: error
+    });
+    throw error;
+  }
+
+  return {
+    mocked: false,
+    runId,
+    txHash,
+    note:
+      appConfig.executionMode === "porto_direct"
+        ? "Execution submitted directly via Porto."
+        : "Execution submitted via observer backend signer."
+  };
+}

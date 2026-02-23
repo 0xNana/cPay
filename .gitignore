@@ -1,0 +1,31 @@
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Build artifacts
+dist/
+build/
+coverage/
+coverage.json
+artifacts/
+cache/
+
+# Hardhat / Solidity
+packages/contracts/fhevmTemp/
+packages/contracts/typechain-types/
+
+# Internal docs (not for public repo)
+internal-docs/

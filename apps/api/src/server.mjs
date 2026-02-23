@@ -26,6 +26,13 @@ const MAX_PAYMENT_COUNT = Number(process.env.MAX_PAYMENT_COUNT || 15);
 const MAX_FAUCET_CLAIM = BigInt(process.env.MAX_FAUCET_CLAIM || "1000000000000");
 const PORTO_DEBUG = (process.env.PORTO_DEBUG || "true") === "true";
 
+const normalizeOrigin = (value) => {
+  if (!value) return value;
+  const trimmed = value.trim();
+  if (trimmed === "*") return "*";
+  return trimmed.replace(/\/+$/, "");
+};
+
 if (!MERCHANT_ADDRESS || !MERCHANT_PRIVATE_KEY || !PAYROLL_EXECUTOR_ADDRESS || !PAYROLL_TOKEN_ADDRESS) {
   throw new Error(
     "Missing required env vars: MERCHANT_ADDRESS, MERCHANT_PRIVATE_KEY, PAYROLL_EXECUTOR_ADDRESS, PAYROLL_TOKEN_ADDRESS"
@@ -181,7 +188,10 @@ const sponsor = (request) => {
 const app = Router({
   basePath: "/porto",
   cors: {
-    origin: CORS_ORIGIN === "*" ? "*" : [...new Set([CORS_ORIGIN, ...CORS_ORIGINS])],
+    origin:
+      CORS_ORIGIN === "*"
+        ? "*"
+        : [...new Set([normalizeOrigin(CORS_ORIGIN), ...CORS_ORIGINS.map(normalizeOrigin)].filter(Boolean))],
     allowMethods: ["POST", "OPTIONS"],
     allowHeaders: ["Content-Type"]
   }
@@ -226,18 +236,21 @@ const getRelayerInstance = () => {
   return relayerInstancePromise;
 };
 
-const allowedOrigins = CORS_ORIGIN === "*" ? ["*"] : [...new Set([CORS_ORIGIN, ...CORS_ORIGINS])];
+const allowedOrigins =
+  CORS_ORIGIN === "*"
+    ? ["*"]
+    : [...new Set([normalizeOrigin(CORS_ORIGIN), ...CORS_ORIGINS.map(normalizeOrigin)].filter(Boolean))];
 
 const resolveCorsOrigin = (req) => {
   if (allowedOrigins.includes("*")) return "*";
-  const requestOrigin = req.headers.origin;
+  const requestOrigin = normalizeOrigin(req.headers.origin);
   if (requestOrigin && allowedOrigins.includes(requestOrigin)) return requestOrigin;
   return allowedOrigins[0] || "null";
 };
 
 const writeCors = (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", resolveCorsOrigin(req));
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Vary", "Origin");
 };

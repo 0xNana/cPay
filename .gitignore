@@ -29,3 +29,6 @@ packages/contracts/typechain-types/
 
 # Internal docs (not for public repo)
 internal-docs/
+
+# Local design assets
+design/

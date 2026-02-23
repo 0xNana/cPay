@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --env-file=.env.local src/server.mjs",
-    "start": "node --env-file=.env.local src/server.mjs"
+    "start": "node src/server.mjs"
   },
   "dependencies": {
     "@zama-fhe/relayer-sdk": "^0.4.1",

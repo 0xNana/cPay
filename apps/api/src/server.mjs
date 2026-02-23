@@ -243,6 +243,18 @@ const writeCors = (req, res) => {
 };
 
 createServer(async (req, res) => {
+  if (req.url === "/health" && req.method === "GET") {
+    writeCors(req, res);
+    res.writeHead(200, { "content-type": "application/json" });
+    res.end(JSON.stringify({ ok: true, service: "cpay-api" }));
+    return;
+  }
+  if (req.url === "/health" && req.method === "OPTIONS") {
+    writeCors(req, res);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
   if (req.url === "/faucet/claim" && req.method === "POST") {
     try {
       writeCors(req, res);
@@ -517,12 +529,12 @@ createServer(async (req, res) => {
   }
 
   return app.listener(req, res);
-}).listen(PORT, () => {
-  console.log(`cPay API listening on http://localhost:${PORT}`);
-  console.log(`Merchant route: http://localhost:${PORT}/porto/merchant`);
-  console.log(`Faucet route: http://localhost:${PORT}/faucet/claim`);
-  console.log(`Decrypt route: http://localhost:${PORT}/decrypt/balance`);
-  console.log(`Execute route: http://localhost:${PORT}/payroll/execute`);
+}).listen(PORT, "0.0.0.0", () => {
+  console.log(`cPay API listening on 0.0.0.0:${PORT}`);
+  console.log(`Merchant route: /porto/merchant`);
+  console.log(`Faucet route: /faucet/claim`);
+  console.log(`Decrypt route: /decrypt/balance`);
+  console.log(`Execute route: /payroll/execute`);
   console.log(`Merchant account: ${MERCHANT_ADDRESS}`);
   console.log(`Faucet signer: ${faucetSigner.address}`);
   console.log(`Observer signer: ${observerSigner.address}`);

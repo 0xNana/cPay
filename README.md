@@ -47,6 +47,7 @@ npm run contracts:test
 - Execute payroll through ERC-7984 confidential transfers.
 - Download local payroll receipt as `pain.002`.
 - Decrypt confidential balances from the connected account.
+- Configure payment email alerts from Dashboard with a local email preview card (non-marketing, no campaign collection).
 
 ## Runtime Modes (MVP)
 - Execution: `porto_direct`

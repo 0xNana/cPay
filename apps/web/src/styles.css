@@ -26,6 +26,18 @@ body {
 }
 .brand { font-weight: 800; color: var(--brand); font-size: 20px; }
 .nav { display: flex; gap: 14px; }
+.nav-toggle {
+  display: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
 .nav-link {
   color: var(--muted);
   text-decoration: none;
@@ -224,6 +236,20 @@ body {
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { text-align: left; padding: 10px; border-bottom: 1px solid var(--line); }
 .table th { color: var(--muted); font-size: 13px; }
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-wrap .table {
+  min-width: 720px;
+}
+.table td {
+  vertical-align: top;
+}
+.completed-meta {
+  overflow-wrap: anywhere;
+}
 .draft-workspace {
   display: grid;
   gap: 14px;
@@ -233,7 +259,7 @@ body {
 .draft-table-wrap {
   border: 1px solid var(--line);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: auto;
   background: #fff;
 }
 .terminal-panel {
@@ -272,6 +298,7 @@ body {
 
 .cta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .cta-actions { display: inline-flex; align-items: center; gap: 8px; }
+.email-alert-input { min-width: 280px; }
 .button {
   background: var(--brand);
   color: #fff;
@@ -329,15 +356,20 @@ body {
 .timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
 .timeline li { border-left: 3px solid #99f6e4; padding: 8px 12px; background: #f8fafc; }
 .timeline h4 { margin: 0 0 4px; }
-.timeline p { margin: 0 0 4px; color: var(--muted); }
-.timeline small { color: #64748b; }
+.timeline p { margin: 0 0 4px; color: var(--muted); overflow-wrap: anywhere; }
+.timeline small { color: #64748b; overflow-wrap: anywhere; }
 
 @media (max-width: 900px) {
   .grid-3 { grid-template-columns: 1fr; }
   .draft-workspace { grid-template-columns: 1fr; }
   .cta-row { flex-direction: column; align-items: flex-start; }
   .cta-actions { width: 100%; flex-wrap: wrap; }
-  .nav { display: none; }
+  .email-alert-input { width: 100%; min-width: 0; }
+  .cta-actions .button { width: 100%; }
+  .completed-meta { font-size: 14px; }
+  .nav-toggle { display: inline-flex; }
+  .nav { display: none; width: 100%; order: 3; flex-wrap: wrap; }
+  .nav.open { display: flex; }
   .topbar { flex-wrap: wrap; }
   .auth-actions { margin-left: 0; width: 100%; }
   .faucet-wrap { width: 100%; }

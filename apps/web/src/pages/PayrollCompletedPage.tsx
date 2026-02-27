@@ -20,7 +20,7 @@ export function PayrollCompletedPage() {
           </tr>
         ))}
       </Table>
-      <p>
+      <p className="completed-meta">
         Run ID: {run.executionState?.runId || run.runId}
         {run.executionState?.txHash ? (
           <>

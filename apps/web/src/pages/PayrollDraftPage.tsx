@@ -8,6 +8,7 @@ export function PayrollDraftPage() {
   const run = getActivePayrollRun();
   const isEmpty = run.payments.length === 0;
   const validation = validatePayrollRun(run);
+  const batchLimitIssue = validation.checks.find((check) => check.label === "MVP batch limit" && !check.ok);
   const title = run.cycleName && run.cycleName !== "Payroll Draft" ? `Payroll Draft: ${run.cycleName}` : "Payroll Draft";
   return (
     <Section title={title} subtitle="Review before executing the batch.">
@@ -23,6 +24,11 @@ export function PayrollDraftPage() {
         <div className="card" style={{ marginBottom: "1rem" }}>
           <h3 style={{ marginTop: 0 }}>Validation Check</h3>
           <p style={{ marginTop: 0 }}>{validation.ok ? "Validation passed." : "Validation failed. Fix issues before execution."}</p>
+          {batchLimitIssue ? (
+            <p style={{ marginTop: 0, color: "#b91c1c" }}>
+              Batch exceeds MVP limit (15). Please split the payroll file and re-upload.
+            </p>
+          ) : null}
           <ul className="list">
             {validation.checks.map((check) => (
               <li key={check.label}>
@@ -54,17 +60,20 @@ export function PayrollDraftPage() {
               ? "Validation passed."
               : "Validation failed."}
         </span>
-        <Link
-          className="button"
-          to={!isEmpty && validation.ok ? "/payroll/confirm" : "#"}
-          onClick={(e) => {
-            if (isEmpty || !validation.ok) e.preventDefault();
-          }}
-          aria-disabled={isEmpty || !validation.ok}
-          style={isEmpty || !validation.ok ? { opacity: 0.5, pointerEvents: "none" } : undefined}
-        >
-          Continue
-        </Link>
+        <div className="cta-actions">
+          <Link className="button ghost" to="/dashboard">Back To Dashboard</Link>
+          <Link
+            className="button"
+            to={!isEmpty && validation.ok ? "/payroll/confirm" : "#"}
+            onClick={(e) => {
+              if (isEmpty || !validation.ok) e.preventDefault();
+            }}
+            aria-disabled={isEmpty || !validation.ok}
+            style={isEmpty || !validation.ok ? { opacity: 0.5, pointerEvents: "none" } : undefined}
+          >
+            Continue
+          </Link>
+        </div>
       </div>
     </Section>
   );

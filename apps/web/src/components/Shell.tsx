@@ -34,6 +34,7 @@ const toRawAmount = (value: string): bigint => {
 export function Shell({ children }: PropsWithChildren) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; tone: "info" | "success" | "error" } | null>(null);
   const [walletAddress, setWalletAddress] = useState<Address | null>(null);
   const [showFaucetCard, setShowFaucetCard] = useState(false);
@@ -157,11 +158,25 @@ export function Shell({ children }: PropsWithChildren) {
     <div className="app">
       <header className="topbar">
         <div className="brand">cPay</div>
-        <nav className="nav">
+        <button
+          className="nav-toggle"
+          type="button"
+          onClick={() => setMobileNavOpen((v) => !v)}
+          aria-label="Toggle navigation"
+          aria-expanded={mobileNavOpen}
+        >
+          ☰
+        </button>
+        <nav className={mobileNavOpen ? "nav open" : "nav"}>
           {nav.map((item) => {
             const active = location.pathname.startsWith(item.to);
             return (
-              <Link key={item.to} className={active ? "nav-link active" : "nav-link"} to={item.to}>
+              <Link
+                key={item.to}
+                className={active ? "nav-link active" : "nav-link"}
+                to={item.to}
+                onClick={() => setMobileNavOpen(false)}
+              >
                 {item.label}
               </Link>
             );

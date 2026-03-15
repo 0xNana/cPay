@@ -83,17 +83,34 @@ export function PayoutPage() {
   };
 
   return (
-    <Section title="Your Confidential Balance" subtitle="Only this account is authorized to decrypt its balance.">
-      <div className="card">
-        <p><strong>Wallet:</strong> {account || "Not connected"}</p>
-        <p><strong>Encrypted balance:</strong> *****</p>
-        <p><strong>Decrypted balance:</strong> {decryptedBalance || "—"}</p>
-        {decryptedBalance ? <p><strong>Session:</strong> Decrypted for this session</p> : null}
-        <div className="cta-row">
-          <span>{status}</span>
-          <button className="button" onClick={onDecrypt} disabled={busy || !account}>
-            {busy ? "Please wait..." : "Decrypt Balance"}
-          </button>
+    <Section title="Employee Portal" subtitle="Verify the wallet, then decrypt the confidential payroll balance.">
+      <div className="grid-2">
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Confidential Balance</h3>
+          <p><strong>Wallet:</strong> {account || "Not connected"}</p>
+          <p><strong>Encrypted balance:</strong> *****</p>
+          <p><strong>Decrypted balance:</strong> {decryptedBalance || "—"}</p>
+          {decryptedBalance ? <p><strong>Session:</strong> Decrypted for this session</p> : null}
+          <div className="cta-row">
+            <span>{status}</span>
+            <button className="button" onClick={onDecrypt} disabled={busy || !account}>
+              {busy ? "Please wait..." : "Decrypt Payment"}
+            </button>
+          </div>
+        </div>
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Decryption Flow</h3>
+          <ul className="list compact-list">
+            <li>Wallet verified against the payroll token observer</li>
+            <li>Encrypted payment stays hidden until employee approval</li>
+            <li>Balance decrypts only for the connected recipient account</li>
+          </ul>
+          {decryptedBalance ? (
+            <div className="success-panel">
+              <p style={{ margin: 0, fontWeight: 700 }}>Payment decrypted</p>
+              <p style={{ margin: "6px 0 0" }}>Amount received: {decryptedBalance}</p>
+            </div>
+          ) : null}
         </div>
       </div>
     </Section>

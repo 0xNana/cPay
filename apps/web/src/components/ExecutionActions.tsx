@@ -130,7 +130,8 @@ export function ExecutionActions() {
         smartAccount: account,
         recipients: [...run.execution.recipients] as Address[],
         encryptedAmounts: encrypted.encryptedAmounts,
-        inputProofs: encrypted.inputProofs
+        inputProofs: encrypted.inputProofs,
+        onLog: (line) => writeTech(line)
       });
       setStatus(result.note);
       writeLine("Transaction submitted ✓");

@@ -1,5 +1,5 @@
 import type { Address, Hex } from "viem";
-import { keccak256, toHex } from "viem";
+import { encodeFunctionData, keccak256, toHex } from "viem";
 import { appConfig, hasExecutionConfig } from "./config";
 import { portoProvider, publicClient, walletClient } from "./portoClient";
 import { payrollExecutorAbi } from "./contracts/payrollExecutorAbi";
@@ -13,6 +13,7 @@ type ExecuteParams = {
 };
 
 export async function executePayrollWithIntent(params: ExecuteParams) {
+  const hexBytes = (value: Hex) => Math.max(0, (value.length - 2) / 2);
   const log = (...args: unknown[]) => {
     if (appConfig.portoDebug) console.debug("[payroll:execute]", ...args);
     if (params.onLog) {
@@ -40,6 +41,9 @@ export async function executePayrollWithIntent(params: ExecuteParams) {
 
   const payrollExecutor = appConfig.payrollExecutor!;
   const payrollToken = appConfig.payrollToken!;
+  const proofBytesTotal = params.inputProofs.reduce((sum, proof) => sum + hexBytes(proof), 0);
+  const proofBytesAvg = params.inputProofs.length ? Math.round(proofBytesTotal / params.inputProofs.length) : 0;
+  const handleBytesTotal = params.encryptedAmounts.reduce((sum, handle) => sum + hexBytes(handle), 0);
   log("checking active porto account...");
   const providerAccounts = (await portoProvider.request({ method: "eth_accounts" })) as Address[];
   const activeAccount = providerAccounts[0];
@@ -59,6 +63,12 @@ export async function executePayrollWithIntent(params: ExecuteParams) {
     paymentCount: params.recipients.length,
     mode: appConfig.executionMode
   });
+  log("fhe_payload", {
+    payments: params.recipients.length,
+    handleBytesTotal,
+    proofBytesTotal,
+    proofBytesAvg
+  });
 
   let txHash: Hex;
   let runId: Hex = keccak256(toHex(`${activeAccount}-${Date.now()}`));
@@ -72,6 +82,24 @@ export async function executePayrollWithIntent(params: ExecuteParams) {
       })) as bigint;
       const validUntil = Math.floor(Date.now() / 1000) + 600;
       runId = keccak256(toHex(`${activeAccount}-${nonce.toString()}-${Date.now()}`));
+      const calldata = encodeFunctionData({
+        abi: payrollExecutorAbi,
+        functionName: "executePayroll",
+        args: [
+          runId,
+          payrollToken,
+          activeAccount,
+          params.recipients,
+          params.encryptedAmounts,
+          params.inputProofs,
+          validUntil,
+          nonce
+        ]
+      });
+      log("aa_payload", {
+        calldataBytes: hexBytes(calldata),
+        recipientCount: params.recipients.length
+      });
 
       log("simulating direct submission...");
       await publicClient.simulateContract({

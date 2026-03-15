@@ -1,6 +1,6 @@
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 
-export function Section({ title, subtitle, children }: PropsWithChildren<{ title: string; subtitle?: string }>) {
+export function Section({ title, subtitle, children }: PropsWithChildren<{ title: ReactNode; subtitle?: string }>) {
   return (
     <section className="section">
       <div className="section-head">

@@ -69,6 +69,36 @@ body {
   box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
   z-index: 10;
 }
+.how-it-works-wrap .faucet-card {
+  right: auto;
+  left: 0;
+}
+.info-card {
+  width: 280px;
+  gap: 10px;
+}
+.info-card-head {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.info-step {
+  display: grid;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.info-step:first-of-type {
+  padding-top: 0;
+  border-top: 0;
+}
+.info-step span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
 .faucet-input {
   width: 100%;
   border: 1px solid var(--line);
@@ -84,14 +114,6 @@ body {
   align-items: center;
   margin-right: 6px;
   vertical-align: middle;
-}
-.auth-state {
-  color: var(--muted);
-  font-size: 12px;
-  max-width: 340px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .toast {
   position: fixed;
@@ -136,62 +158,6 @@ body {
   opacity: 0.6;
   cursor: not-allowed;
 }
-.balance-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 4px 8px;
-  background: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-}
-.switch-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 4px 8px;
-  background: #fff;
-  color: var(--ink);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-}
-.switch-toggle:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.switch-label {
-  line-height: 1;
-}
-.switch-track {
-  position: relative;
-  width: 34px;
-  height: 20px;
-  border-radius: 999px;
-  background: #cbd5e1;
-  transition: background 160ms ease;
-}
-.switch-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.25);
-  transition: transform 160ms ease;
-}
-.switch-toggle.on .switch-track {
-  background: #14b8a6;
-}
-.switch-toggle.on .switch-thumb {
-  transform: translateX(14px);
-}
 .warning-chip {
   display: inline-flex;
   align-items: center;
@@ -229,9 +195,106 @@ body {
 }
 
 .grid-3 { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-4 { display: grid; gap: 12px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .stat { border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
 .stat p { margin: 0 0 6px; color: var(--muted); font-size: 13px; }
 .stat h3 { margin: 0; font-size: 24px; }
+.stack-sm {
+  display: grid;
+  gap: 6px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid #99f6e4;
+  background: #f0fdfa;
+  color: #115e59;
+  font-size: 12px;
+  font-weight: 700;
+}
+.detail-list {
+  display: grid;
+  gap: 10px;
+}
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.detail-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.detail-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+.status-text {
+  font-weight: 800;
+}
+.status-text-good {
+  color: #15803d;
+}
+.status-text-warn {
+  color: #b45309;
+}
+.status-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 2px 0;
+}
+.status-footer-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.status-footer-item-right {
+  justify-content: flex-end;
+}
+.comparison-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.comparison-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  background: #f8fafc;
+}
+.comparison-card h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+.comparison-card-positive {
+  background: linear-gradient(180deg, #f0fdfa, #ffffff);
+  border-color: #99f6e4;
+}
+.compact-list {
+  gap: 6px;
+}
+.note-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.success-panel {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #99f6e4;
+  border-radius: 12px;
+  background: #f0fdfa;
+  color: #115e59;
+}
 
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { text-align: left; padding: 10px; border-bottom: 1px solid var(--line); }
@@ -298,7 +361,21 @@ body {
 
 .cta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .cta-actions { display: inline-flex; align-items: center; gap: 8px; }
-.email-alert-input { min-width: 280px; }
+.email-alert-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+.email-alert-input {
+  width: 320px;
+  min-width: 0;
+  flex: 0 1 320px;
+}
+.email-alert-row .button {
+  flex: 0 0 auto;
+  width: auto;
+}
 .button {
   background: var(--brand);
   color: #fff;
@@ -361,10 +438,25 @@ body {
 
 @media (max-width: 900px) {
   .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr; }
+  .comparison-grid { grid-template-columns: 1fr; }
+  .status-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .status-footer-item-right {
+    justify-content: flex-start;
+  }
   .draft-workspace { grid-template-columns: 1fr; }
   .cta-row { flex-direction: column; align-items: flex-start; }
   .cta-actions { width: 100%; flex-wrap: wrap; }
-  .email-alert-input { width: 100%; min-width: 0; }
+  .email-alert-row { width: 100%; }
+  .email-alert-row .button { width: auto; }
+  .email-alert-input {
+    width: min(240px, calc(100vw - 160px));
+    flex: 1 1 auto;
+  }
   .cta-actions .button { width: 100%; }
   .completed-meta { font-size: 14px; }
   .nav-toggle { display: inline-flex; }
@@ -378,7 +470,6 @@ body {
     width: 100%;
     margin-top: 8px;
   }
-  .auth-state { max-width: 100%; }
   .toast {
     left: 12px;
     right: 12px;

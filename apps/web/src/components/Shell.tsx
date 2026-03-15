@@ -38,6 +38,7 @@ export function Shell({ children }: PropsWithChildren) {
   const [toast, setToast] = useState<{ message: string; tone: "info" | "success" | "error" } | null>(null);
   const [walletAddress, setWalletAddress] = useState<Address | null>(null);
   const [showFaucetCard, setShowFaucetCard] = useState(false);
+  const [showHowItWorksCard, setShowHowItWorksCard] = useState(false);
   const [faucetAmount, setFaucetAmount] = useState("$1000000");
   const [relayerHealthy, setRelayerHealthy] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
@@ -151,6 +152,7 @@ export function Shell({ children }: PropsWithChildren) {
     setWalletAddress(null);
     savePortoAccount(null);
     setShowFaucetCard(false);
+    setShowHowItWorksCard(false);
     showToast("Logged out.", "success");
   };
 
@@ -183,6 +185,35 @@ export function Shell({ children }: PropsWithChildren) {
           })}
         </nav>
         <div className="auth-actions">
+          <div className="faucet-wrap how-it-works-wrap">
+            <button className="button ghost" onClick={() => setShowHowItWorksCard((v) => !v)} disabled={busy}>
+              How it works
+            </button>
+            {showHowItWorksCard ? (
+              <div className="faucet-card info-card">
+                <div className="info-card-head">How it works</div>
+                <div className="info-step">
+                  <strong>1. Employer encrypts</strong>
+                  <span>Upload `pain.001` and encrypt salaries locally before execution.</span>
+                </div>
+                <div className="info-step">
+                  <strong>2. Contract settles</strong>
+                  <span>Submit one confidential batch transaction for payroll settlement.</span>
+                </div>
+                <div className="info-step">
+                  <strong>3. Employee decrypts</strong>
+                  <span>Only the recipient wallet can reveal the final payment amount.</span>
+                </div>
+                <div className="info-step">
+                  <strong>Employee portal</strong>
+                  <span>Open Balance to verify the wallet and decrypt the confidential payroll payment.</span>
+                </div>
+                <Link className="button" to="/payout" onClick={() => setShowHowItWorksCard(false)}>
+                  Open Employee Portal
+                </Link>
+              </div>
+            ) : null}
+          </div>
           <div className="faucet-wrap">
             <button className="button ghost" onClick={() => setShowFaucetCard((v) => !v)} disabled={busy}>
               <span className="faucet-icon" aria-hidden="true">

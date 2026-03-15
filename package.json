@@ -7,6 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
+    "build": "npm run build:web",
+    "build:web": "npm --workspace apps/web run build",
     "dev": "npm --workspace apps/web run dev",
     "dev:api": "npm --workspace apps/api run dev",
     "contracts:install": "npm --prefix packages/contracts install",

@@ -21,21 +21,45 @@ export function PayrollDraftPage() {
           <Link className="button" to="/dashboard">Go To Dashboard</Link>
         </div>
       ) : (
-        <div className="card" style={{ marginBottom: "1rem" }}>
-          <h3 style={{ marginTop: 0 }}>Validation Check</h3>
-          <p style={{ marginTop: 0 }}>{validation.ok ? "Validation passed." : "Validation failed. Fix issues before execution."}</p>
-          {batchLimitIssue ? (
-            <p style={{ marginTop: 0, color: "#b91c1c" }}>
-              Batch exceeds MVP limit (15). Please split the payroll file and re-upload.
-            </p>
-          ) : null}
-          <ul className="list">
-            {validation.checks.map((check) => (
-              <li key={check.label}>
-                {check.ok ? "OK" : "FAIL"} - {check.label}: {check.detail}
-              </li>
-            ))}
-          </ul>
+        <div className="draft-workspace">
+          <div className="card">
+            <h3 style={{ marginTop: 0 }}>Validation Check</h3>
+            <p style={{ marginTop: 0 }}>{validation.ok ? "Validation passed." : "Validation failed. Fix issues before execution."}</p>
+            {batchLimitIssue ? (
+              <p style={{ marginTop: 0, color: "#b91c1c" }}>
+                Batch exceeds MVP limit (15). Please split the payroll file and re-upload.
+              </p>
+            ) : null}
+            <ul className="list">
+              {validation.checks.map((check) => (
+                <li key={check.label}>
+                  {check.ok ? "OK" : "FAIL"} - {check.label}: {check.detail}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <aside className="card">
+            <h3 style={{ marginTop: 0 }}>Payroll Batch Preview</h3>
+            <div className="detail-list">
+              <div className="detail-row">
+                <span className="detail-label">Source File</span>
+                <strong>pain.001</strong>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Employees</span>
+                <strong>{run.stats.employees}</strong>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Total Payroll</span>
+                <strong>{run.stats.totalDisplay}</strong>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Status</span>
+                <strong>{validation.ok ? "Ready to Encrypt" : "Needs Review"}</strong>
+              </div>
+            </div>
+            <p className="note-text">This preview is generated before FHE encryption and on-chain batch settlement.</p>
+          </aside>
         </div>
       )}
       <div className="draft-table-wrap">
